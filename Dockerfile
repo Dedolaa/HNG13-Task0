@@ -1,7 +1,7 @@
 # Use the official Python 3.10 image
 FROM python:3.10-slim
 
-# Set environment variables
+# Environment settings
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
@@ -11,19 +11,19 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y build-essential libpq-dev && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install
+# Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
+# Copy the rest of the project
 COPY . .
 
-# Collect static files (safe to skip if not using Django staticfiles)
+# Collect static files (ignore if not configured)
 RUN python manage.py collectstatic --noinput || true
 
-# Expose port
+# Expose the port
 ENV PORT=8000
 EXPOSE 8000
 
-# Run Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "hng_stage0:application"]
+# Start the Django app with Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]
