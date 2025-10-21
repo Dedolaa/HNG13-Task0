@@ -1,0 +1,5 @@
+providers = ["python"]
+
+[build]
+  install = "pip install -r requirements.txt"
+  start = "gunicorn hng_stage0:application --bind 0.0.0.0:$PORT"
